@@ -2,9 +2,10 @@
 
 [AI Nexus Demo]   https://chat-grid.vercel.app/
 
-<img width="1918" height="910" alt="image" src="https://github.com/user-attachments/assets/4496799e-343d-4012-b94c-8ae4a8b3a21a" />
-
 A full-stack, multi-model AI chat application that allows users to interact with multiple AI models simultaneously.
+
+
+<img width="1918" height="910" alt="image" src="https://github.com/user-attachments/assets/4496799e-343d-4012-b94c-8ae4a8b3a21a" />
 
 ## Features
 
@@ -17,6 +18,7 @@ A full-stack, multi-model AI chat application that allows users to interact with
 - Responsive design (works on desktop & mobile)
 - Light/dark mode toggle
 - Error handling and loading indicators
+
 
 ## Tech Stack
 
