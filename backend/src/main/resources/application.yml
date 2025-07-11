@@ -1,0 +1,17 @@
+spring:
+  application:
+    name: backend
+server:
+  port: ${PORT:8080}
+
+openrouter:
+  endpoint: https://openrouter.ai/api/v1/chat/completions
+  models:
+    deepseek: deepseek/deepseek-r1-0528:free
+    copilot: microsoft/phi-4-reasoning-plus:free
+    gemini: google/gemma-3n-e4b-it:free
+  api-keys:
+    deepseek: ${DEEPSEEK_APIKEY}
+    copilot: ${COPILOT_APIKEY}
+    gemini: ${GEMINI_APIKEY}
+
