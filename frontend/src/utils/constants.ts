@@ -4,26 +4,34 @@ export const AI_MODELS: AIModel[] = [
   {
     id: 'gemini',
     name: 'Gemini',
-    displayName: 'Gemini Pro',
-    color: 'from-violet-500 via-purple-500 to-blue-500',
+    displayName: 'Gemini 1.5 Pro',
+    color: 'from-indigo-600 via-purple-600 to-violet-700',
     icon: 'Sparkles',
-    description: 'Google\'s most advanced multimodal AI'
+    description: 'Google\'s multimodal intelligence'
+  },
+  {
+    id: 'gpt4',
+    name: 'GPT-4o',
+    displayName: 'GPT-4o',
+    color: 'from-emerald-500 via-teal-600 to-cyan-700',
+    icon: 'Zap',
+    description: 'OpenAI\'s most versatile model'
+  },
+  {
+    id: 'claude',
+    name: 'Claude',
+    displayName: 'Claude 3.5 Sonnet',
+    color: 'from-amber-500 via-orange-600 to-red-600',
+    icon: 'Brain',
+    description: 'Anthropic\'s reasoning specialist'
   },
   {
     id: 'deepseek',
     name: 'DeepSeek',
     displayName: 'DeepSeek V3',
-    color: 'from-emerald-400 via-teal-500 to-cyan-600',
+    color: 'from-cyan-500 via-blue-600 to-indigo-700',
     icon: 'Eye',
-    description: 'Advanced reasoning and coding model'
-  },
-  {
-    id: 'copilot',
-    name: 'Copilot',
-    displayName: 'GitHub Copilot',
-    color: 'from-orange-400 via-pink-500 to-red-500',
-    icon: 'Bot',
-    description: 'Microsoft\'s AI-powered assistant'
+    description: 'Advanced coding & math capability'
   }
 ];
 
