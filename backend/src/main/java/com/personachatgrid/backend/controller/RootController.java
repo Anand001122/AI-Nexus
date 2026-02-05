@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
-@CrossOrigin(origins = {"http://localhost:5173", "http://localhost:3000", "https://chat-grid.vercel.app", "https://ai-nexus-frontend.vercel.app"}, originPatterns = {"https://*.vercel.app"})
+@CrossOrigin(origins = {"http://localhost:5173", "http://localhost:3000", "https://chat-grid.vercel.app", "https://ai-nexus-frontend.vercel.app"}, originPatterns = {"https://*.vercel.app", "https://*.netlify.app"})
 public class RootController {
 
     @GetMapping("/")
