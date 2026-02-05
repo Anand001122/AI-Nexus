@@ -6,7 +6,7 @@ import { useChatStore } from '../store/chatStore';
 
 export const Header: React.FC = () => {
   const { clearAllConversations, conversations } = useChatStore();
-  
+
   const hasConversations = Object.keys(conversations).length > 0;
 
   const handleClearAll = () => {
@@ -16,7 +16,7 @@ export const Header: React.FC = () => {
   };
 
   return (
-    <header className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-xl border-b border-white/20 dark:border-gray-700/50 shadow-lg">
+    <header className="glass-header shadow-sm">
       <div className="max-w-7xl mx-auto px-6 py-4">
         <div className="flex items-center justify-between">
           {/* Enhanced Logo */}
@@ -30,10 +30,10 @@ export const Header: React.FC = () => {
               </div>
             </div>
             <div>
-              <h1 className="text-2xl font-bold bg-gradient-to-r from-gray-900 via-blue-800 to-purple-800 dark:from-gray-100 dark:via-blue-200 dark:to-purple-200 bg-clip-text text-transparent">
+              <h1 className="text-2xl font-bold bg-gradient-to-r from-slate-900 via-blue-700 to-indigo-800 dark:from-white dark:via-blue-200 dark:to-indigo-200 bg-clip-text text-transparent">
                 AI Chat Pro
               </h1>
-              <p className="text-sm text-gray-500 dark:text-gray-400">
+              <p className="text-sm text-slate-500 dark:text-slate-400">
                 Compare AI responses instantly
               </p>
             </div>
@@ -42,7 +42,7 @@ export const Header: React.FC = () => {
           {/* Enhanced Controls */}
           <div className="flex items-center space-x-4">
             <ModelSelector />
-            
+
             {hasConversations && (
               <button
                 onClick={handleClearAll}
@@ -53,7 +53,7 @@ export const Header: React.FC = () => {
                 <Trash2 className="h-5 w-5 group-hover:scale-110 transition-transform duration-200" />
               </button>
             )}
-            
+
             <ThemeToggle />
           </div>
         </div>

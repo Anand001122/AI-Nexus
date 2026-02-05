@@ -43,7 +43,7 @@ export const MessageList: React.FC = () => {
   // Multi-model view with enhanced scrolling
   if (selectedModels.length > 1) {
     return (
-      <div className="flex-1 overflow-hidden bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-gray-900 dark:via-slate-800 dark:to-gray-900">
+      <div className="flex-1 overflow-hidden bg-slate-50 dark:bg-slate-900">
         <div className="h-full grid grid-cols-1 lg:grid-cols-3 gap-6 p-6">
           {selectedModels.map((modelId) => {
             const model = AI_MODELS.find(m => m.id === modelId);
@@ -109,7 +109,7 @@ export const MessageList: React.FC = () => {
 
   // Single model view with enhanced scrolling
   return (
-    <div className="flex-1 overflow-y-auto bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-gray-900 dark:via-slate-800 dark:to-gray-900 scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-transparent">
+    <div className="flex-1 overflow-y-auto bg-slate-50 dark:bg-slate-900 scrollbar-thin">
       <div className="max-w-4xl mx-auto p-6 space-y-6">
         {messages.map((message) => (
           <div key={message.id} className="group">

@@ -13,7 +13,7 @@ interface MessageProps {
 
 export const Message: React.FC<MessageProps> = ({ message }) => {
   const [copied, setCopied] = useState(false);
-  
+
   const isUser = message.isUser || message.aiModel === 'user';
   const model = AI_MODELS.find(m => m.id === message.aiModel);
 
@@ -56,12 +56,11 @@ export const Message: React.FC<MessageProps> = ({ message }) => {
           </div>
 
           {/* Enhanced Message Bubble */}
-          <div 
-            className={`group relative p-5 rounded-2xl shadow-lg transition-all duration-200 hover:shadow-xl ${
-              isUser 
-                ? 'bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 text-white' 
-                : 'bg-white/90 dark:bg-gray-800/90 backdrop-blur-xl border border-white/20 dark:border-gray-700/50'
-            }`}
+          <div
+            className={`group relative p-5 rounded-3xl shadow-md transition-all duration-300 hover:shadow-xl ${isUser
+                ? 'bg-gradient-to-br from-blue-600 to-indigo-700 text-white'
+                : 'glass'
+              }`}
           >
             {isUser ? (
               <p className="text-white whitespace-pre-wrap leading-relaxed">{message.content}</p>
@@ -89,11 +88,10 @@ export const Message: React.FC<MessageProps> = ({ message }) => {
             )}
 
             {/* Message Tail */}
-            <div className={`absolute top-4 ${isUser ? 'right-0 translate-x-2' : 'left-0 -translate-x-2'} w-4 h-4 rotate-45 ${
-              isUser 
-                ? 'bg-gradient-to-r from-blue-500 to-purple-500' 
+            <div className={`absolute top-4 ${isUser ? 'right-0 translate-x-2' : 'left-0 -translate-x-2'} w-4 h-4 rotate-45 ${isUser
+                ? 'bg-gradient-to-r from-blue-500 to-purple-500'
                 : 'bg-white/90 dark:bg-gray-800/90 border-l border-t border-white/20 dark:border-gray-700/50'
-            }`}></div>
+              }`}></div>
           </div>
         </div>
       </div>

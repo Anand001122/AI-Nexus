@@ -8,17 +8,17 @@ export const ChatInput: React.FC = () => {
   const [message, setMessage] = useState('');
   const [isSending, setIsSending] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  
-  const { 
-    selectedModels, 
-    currentConversationId, 
-    createConversation, 
-    addUserMessage, 
-    addMessage, 
+
+  const {
+    selectedModels,
+    currentConversationId,
+    createConversation,
+    addUserMessage,
+    addMessage,
     setLoading,
     setError
   } = useChatStore();
-  
+
   const { sendMessage } = useAPI();
 
   const adjustTextareaHeight = () => {
@@ -35,7 +35,7 @@ export const ChatInput: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!message.trim() || isSending || selectedModels.length === 0) return;
 
     const userMessage = message.trim();
@@ -104,7 +104,7 @@ export const ChatInput: React.FC = () => {
   };
 
   return (
-    <div className="border-t border-white/20 dark:border-gray-700/50 bg-white/90 dark:bg-gray-800/90 backdrop-blur-xl shadow-2xl">
+    <div className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border-t border-slate-200/50 dark:border-white/5">
       <div className="max-w-5xl mx-auto p-6">
         <form onSubmit={handleSubmit} className="relative">
           <div className="flex items-end space-x-4">
@@ -116,21 +116,21 @@ export const ChatInput: React.FC = () => {
                 onChange={(e) => setMessage(e.target.value)}
                 onKeyDown={handleKeyDown}
                 placeholder={
-                  selectedModels.length === 0 
-                    ? "Select an AI model to start chatting..." 
-                    : selectedModels.length === 1 
-                      ? `Ask ${selectedModels[0]}...` 
+                  selectedModels.length === 0
+                    ? "Select an AI model to start chatting..."
+                    : selectedModels.length === 1
+                      ? `Ask ${selectedModels[0]}...`
                       : `Ask ${selectedModels.length} AI models...`
                 }
                 disabled={selectedModels.length === 0 || isSending}
-                className="w-full px-6 py-4 pr-16 bg-gray-50/80 dark:bg-gray-700/80 backdrop-blur-sm border border-gray-200/50 dark:border-gray-600/50 rounded-2xl resize-none focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-gray-100"
+                className="w-full px-6 py-4 pr-16 bg-slate-50/50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-3xl resize-none focus:outline-none focus:ring-2 focus:ring-blue-500/30 transition-all duration-300 disabled:opacity-50 text-slate-900 dark:text-slate-100"
                 style={{ minHeight: '60px', maxHeight: '120px' }}
                 rows={1}
               />
-              
+
               {/* Enhanced Character count */}
               {message.length > 0 && (
-                <div className="absolute bottom-2 right-20 text-xs text-gray-400 bg-white/80 dark:bg-gray-800/80 px-2 py-1 rounded-full backdrop-blur-sm">
+                <div className="absolute bottom-2 right-20 text-xs text-slate-400">
                   {message.length}
                 </div>
               )}
@@ -141,11 +141,10 @@ export const ChatInput: React.FC = () => {
               type={isSending ? "button" : "submit"}
               onClick={isSending ? handleStop : undefined}
               disabled={selectedModels.length === 0 || (!isSending && !message.trim())}
-              className={`p-4 rounded-2xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl transform hover:scale-105 ${
-                isSending
-                  ? 'bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 text-white'
-                  : 'bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 hover:from-blue-600 hover:via-purple-600 hover:to-pink-600 text-white'
-              }`}
+              className={`p-4 rounded-2xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl transform hover:scale-105 ${isSending
+                  ? 'bg-gradient-to-tr from-rose-500 to-red-600 text-white'
+                  : 'bg-gradient-to-tr from-blue-600 via-indigo-600 to-blue-500 text-white'
+                }`}
               aria-label={isSending ? "Stop generation" : "Send message"}
             >
               {isSending ? (

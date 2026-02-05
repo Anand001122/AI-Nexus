@@ -23,17 +23,17 @@ export const ModelSelector: React.FC = () => {
   };
 
   const allModelsSelected = selectedModels.length === AI_MODELS.length;
-  const displayText = allModelsSelected 
-    ? 'All Models' 
-    : selectedModels.length === 1 
-      ? AI_MODELS.find(m => m.id === selectedModels[0])?.displayName 
+  const displayText = allModelsSelected
+    ? 'All Models'
+    : selectedModels.length === 1
+      ? AI_MODELS.find(m => m.id === selectedModels[0])?.displayName
       : `${selectedModels.length} Models`;
 
   return (
     <div className="relative">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center justify-between w-full px-6 py-4 bg-white/90 dark:bg-gray-800/90 backdrop-blur-xl border border-white/20 dark:border-gray-700/50 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500/50 min-w-[240px] group"
+        className="flex items-center justify-between w-full px-6 py-4 glass rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500/50 min-w-[240px] group"
         aria-haspopup="listbox"
         aria-expanded={isOpen}
       >
@@ -66,7 +66,7 @@ export const ModelSelector: React.FC = () => {
       </button>
 
       {isOpen && (
-        <div className="absolute z-50 w-full mt-3 bg-white/95 dark:bg-gray-800/95 backdrop-blur-xl border border-white/20 dark:border-gray-700/50 rounded-2xl shadow-2xl max-h-96 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-transparent">
+        <div className="absolute top-full left-0 z-[100] w-full mt-3 glass rounded-2xl shadow-2xl max-h-80 overflow-y-auto scrollbar-thin animate-in">
           <div className="p-3">
             {/* All Models Option */}
             <button
@@ -93,7 +93,7 @@ export const ModelSelector: React.FC = () => {
             {AI_MODELS.map((model) => {
               const IconComponent = (LucideIcons as any)[model.icon];
               const isSelected = selectedModels.includes(model.id);
-              
+
               return (
                 <button
                   key={model.id}

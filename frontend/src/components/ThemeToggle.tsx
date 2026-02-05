@@ -12,26 +12,24 @@ export const ThemeToggle: React.FC = () => {
   ] as const;
 
   return (
-    <div className="relative">
-      <select
-        value={theme}
-        onChange={(e) => setTheme(e.target.value as 'light' | 'dark' | 'system')}
-        className="appearance-none bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2 pr-8 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
-        aria-label="Select theme"
-      >
-        {themes.map(({ value, label }) => (
-          <option key={value} value={value}>
-            {label}
-          </option>
-        ))}
-      </select>
-      <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-        {themes.find(t => t.value === theme)?.icon && 
-          React.createElement(themes.find(t => t.value === theme)!.icon, {
-            className: "h-4 w-4 text-gray-400"
-          })
-        }
-      </div>
+    <div className="flex bg-slate-100/50 dark:bg-slate-800/50 p-1 rounded-xl border border-slate-200/50 dark:border-slate-700/50">
+      {themes.map(({ value, icon: Icon, label }) => (
+        <button
+          key={value}
+          onClick={() => setTheme(value)}
+          className={`p-2 rounded-lg transition-all duration-200 flex items-center justify-center group relative ${theme === value
+              ? 'bg-white dark:bg-slate-700 shadow-sm text-blue-600 dark:text-blue-400'
+              : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'
+            }`}
+          aria-label={`Switch to ${label} theme`}
+          title={label}
+        >
+          <Icon className="h-4 w-4" />
+          {theme === value && (
+            <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 bg-blue-500 rounded-full"></span>
+          )}
+        </button>
+      ))}
     </div>
   );
 };
