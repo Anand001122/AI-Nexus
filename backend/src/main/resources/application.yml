@@ -8,10 +8,12 @@ openrouter:
   endpoint: https://openrouter.ai/api/v1/chat/completions
   models:
     deepseek: deepseek/deepseek-r1-0528:free
-    copilot: microsoft/phi-4-reasoning-plus:free
-    gemini: google/gemma-3n-e4b-it:free
+    gpt4: openai/gpt-4o-mini
+    claude: anthropic/claude-3.5-sonnet
+    gemini: google/gemini-pro-1.5:free
   api-keys:
     deepseek: ${DEEPSEEK_APIKEY}
-    copilot: ${COPILOT_APIKEY}
+    gpt4: ${GPT4_APIKEY}
+    claude: ${CLAUDE_APIKEY}
     gemini: ${GEMINI_APIKEY}
 

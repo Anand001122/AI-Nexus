@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api")
-@CrossOrigin(origins = {"http://localhost:5173", "http://localhost:3000", "https://chat-grid.vercel.app", "https://ai-nexus-frontend.vercel.app"})
+@CrossOrigin(origins = {"http://localhost:5173", "http://localhost:3000", "https://chat-grid.vercel.app", "https://ai-nexus-frontend.vercel.app"}, originPatterns = {"https://*.vercel.app"})
 @Log4j2
 public class ChatController {
 
