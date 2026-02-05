@@ -11,9 +11,13 @@ const BackendStatus: React.FC = () => {
   React.useEffect(() => {
     const checkStatus = async () => {
       try {
-        const res = await fetch(API_BASE_URL.replace('/api', ''));
-        setIsOnline(res.ok);
-      } catch {
+        const rootUrl = API_BASE_URL.replace('/api', '');
+        console.log('🔍 Checking Backend Status at:', rootUrl);
+        const res = await fetch(rootUrl);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        setIsOnline(true);
+      } catch (err) {
+        console.error('❌ Backend Connection Error:', err);
         setIsOnline(false);
       }
     };
