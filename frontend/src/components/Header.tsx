@@ -11,7 +11,7 @@ const BackendStatus: React.FC = () => {
   React.useEffect(() => {
     const checkStatus = async () => {
       try {
-        const rootUrl = API_BASE_URL.replace('/api', '');
+        const rootUrl = API_BASE_URL;
         console.log('🔍 Checking Backend Status at:', rootUrl);
         const res = await fetch(rootUrl);
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
