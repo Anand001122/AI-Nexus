@@ -13,6 +13,7 @@ public class WebConfig implements WebMvcConfigurer {
                 .allowedOriginPatterns(
                     "http://localhost:5173",
                     "http://localhost:3000",
+                    "http://localhost:8087",
                     "https://*.vercel.app",
                     "https://*.netlify.app",
                     "https://ai-nexus-frontend.vercel.app"

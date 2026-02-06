@@ -7,13 +7,13 @@ server:
 openrouter:
   endpoint: https://openrouter.ai/api/v1/chat/completions
   models:
-    deepseek: deepseek/deepseek-r1:free
+    deepseek: deepseek/deepseek-r1-0528:free
     gpt5: openai/gpt-4o
     grok: x-ai/grok-2-1212
-    gemini: google/gemini-2.0-pro-exp-02-05:free
+    gemini: google/gemma-3n-e4b-it:free
   api-keys:
-    deepseek: ${Deepseek_APIKEY}
-    gpt5: ${OpenAI_APIKey}
-    grok: ${Grok_APIKEY}
+    deepseek: ${DEEPSEEK_APIKEY}
+    gpt5: ${GPT5_APIKEY}
+    grok: ${GROK_APIKEY}
     gemini: ${GEMINI_APIKEY}
 
