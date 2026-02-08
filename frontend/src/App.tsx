@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
-import { Header } from './components/Header';
-import { MessageList } from './components/MessageList';
-import { ChatInput } from './components/ChatInput';
+import { Header } from './components/layout/Header';
+import { MessageList } from './components/chat/MessageList';
+import { ChatInput } from './components/chat/ChatInput';
 import { useChatStore } from './store/chatStore';
 import { useAuthStore } from './store/authStore';
 import { AuthPage } from './pages/AuthPage';
@@ -12,16 +12,23 @@ import { LeaderboardPage } from './pages/LeaderboardPage';
 import { FeedbackPage } from './pages/FeedbackPage';
 import { ProPage } from './pages/ProPage';
 
+import { Sidebar } from './components/layout/Sidebar';
+
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const isAuthenticated = useAuthStore(state => state.isAuthenticated);
   return isAuthenticated ? <>{children}</> : <Navigate to="/auth" replace />;
 };
 
 const ChatInterface = () => (
-  <div className="flex flex-col h-screen">
-    <Header />
-    <MessageList />
-    <ChatInput />
+  <div className="flex h-screen overflow-hidden bg-black relative">
+    <Sidebar />
+    <div className="flex-1 flex flex-col relative overflow-hidden">
+      <Header />
+      <div className="flex-1 flex flex-col overflow-hidden relative">
+        <MessageList />
+        <ChatInput />
+      </div>
+    </div>
   </div>
 );
 

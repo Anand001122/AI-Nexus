@@ -6,11 +6,11 @@ export const formatTimestamp = (timestamp: string): string => {
   const date = new Date(timestamp);
   const now = new Date();
   const diffInMinutes = Math.floor((now.getTime() - date.getTime()) / (1000 * 60));
-  
+
   if (diffInMinutes < 1) return 'Just now';
   if (diffInMinutes < 60) return `${diffInMinutes}m ago`;
   if (diffInMinutes < 1440) return `${Math.floor(diffInMinutes / 60)}h ago`;
-  
+
   return date.toLocaleDateString();
 };
 
@@ -18,7 +18,7 @@ export const copyToClipboard = async (text: string): Promise<boolean> => {
   try {
     await navigator.clipboard.writeText(text);
     return true;
-  } catch (error) {
+  } catch {
     // Fallback for older browsers
     const textArea = document.createElement('textarea');
     textArea.value = text;
@@ -36,7 +36,7 @@ export const getSystemTheme = (): 'light' | 'dark' => {
 
 export const applyTheme = (theme: 'light' | 'dark' | 'system') => {
   const actualTheme = theme === 'system' ? getSystemTheme() : theme;
-  
+
   if (actualTheme === 'dark') {
     document.documentElement.classList.add('dark');
   } else {

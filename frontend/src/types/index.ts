@@ -39,6 +39,7 @@ export interface ChatState {
   loading: Record<string, boolean>;
   errors: Record<string, string | null>;
   theme: 'light' | 'dark' | 'system';
+  isSidebarOpen: boolean;
 }
 
 export interface SendMessageRequest {
@@ -59,4 +60,55 @@ export interface SendMessageResponse {
 
 export interface CreateConversationRequest {
   aiModel: string;
+}
+
+export interface ModelStat {
+  modelId: string;
+  messageCount: number;
+  avgResponseTime: number;
+  avgTokensPerSecond: number;
+  totalTokens: number;
+}
+
+export interface ActivityTrend {
+  date: string;
+  messageCount: number;
+}
+
+export interface PersonalAnalytics {
+  modelStats: ModelStat[];
+  activityTrend: ActivityTrend[];
+}
+
+export interface LeaderboardEntry {
+  modelId: string;
+  displayName: string;
+  avgResponseTime?: number;
+  messageCount?: number;
+  avgTokensPerSecond?: number;
+  [key: string]: string | number | undefined;
+}
+
+export interface UsageTrend {
+  date: string;
+  modelCounts: Record<string, number>;
+}
+
+export interface GlobalLeaderboard {
+  topBySpeed: LeaderboardEntry[];
+  topByVolume: LeaderboardEntry[];
+  topByEfficiency: LeaderboardEntry[];
+  usageTrends: UsageTrend[];
+}
+
+export interface AuthCredentials {
+  email: string;
+  password: string;
+  fullName?: string;
+}
+
+export interface SignupData {
+  email: string;
+  password: string;
+  fullName: string;
 }

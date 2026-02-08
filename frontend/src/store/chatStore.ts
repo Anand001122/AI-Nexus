@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { ChatState, Conversation, Message } from '../types';
-import { generateId, getSystemTheme, applyTheme } from '../utils/helpers';
+import { generateId, applyTheme } from '../utils/helpers';
 import { AI_MODELS } from '../utils/constants';
 
 interface ChatActions {
@@ -14,6 +14,8 @@ interface ChatActions {
   clearAllConversations: () => void;
   setTheme: (theme: 'light' | 'dark' | 'system') => void;
   addUserMessage: (message: string) => void;
+  setSidebarOpen: (isOpen: boolean) => void;
+  toggleSidebar: () => void;
 }
 
 export const useChatStore = create<ChatState & ChatActions>((set, get) => ({
@@ -23,6 +25,7 @@ export const useChatStore = create<ChatState & ChatActions>((set, get) => ({
   loading: {},
   errors: {},
   theme: 'system',
+  isSidebarOpen: false,
 
   setSelectedModels: (models) => set({ selectedModels: models }),
 
@@ -68,7 +71,7 @@ export const useChatStore = create<ChatState & ChatActions>((set, get) => ({
   clearConversation: (conversationId) => set((state) => {
     const newConversations = { ...state.conversations };
     delete newConversations[conversationId];
-    
+
     return {
       conversations: newConversations,
       currentConversationId: state.currentConversationId === conversationId ? null : state.currentConversationId
@@ -91,7 +94,7 @@ export const useChatStore = create<ChatState & ChatActions>((set, get) => ({
   addUserMessage: (message) => {
     const state = get();
     const { selectedModels, currentConversationId } = state;
-    
+
     // Create conversation if none exists
     let conversationId = currentConversationId;
     if (!conversationId) {
@@ -109,7 +112,10 @@ export const useChatStore = create<ChatState & ChatActions>((set, get) => ({
     };
 
     state.addMessage(conversationId, userMessage);
-  }
+  },
+
+  setSidebarOpen: (isOpen) => set({ isSidebarOpen: isOpen }),
+  toggleSidebar: () => set((state) => ({ isSidebarOpen: !state.isSidebarOpen })),
 }));
 
 // Initialize theme on store creation

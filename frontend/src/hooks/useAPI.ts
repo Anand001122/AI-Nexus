@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { SendMessageRequest, SendMessageResponse, CreateConversationRequest, Conversation } from '../types';
+import { SendMessageRequest, SendMessageResponse, CreateConversationRequest, Conversation, PersonalAnalytics, GlobalLeaderboard, AuthCredentials, SignupData } from '../types';
 import apiClient from '../api/client';
 
 export const useAPI = () => {
@@ -25,13 +25,13 @@ export const useAPI = () => {
     return response.data;
   }
 
-  const getPersonalAnalytics = async (): Promise<any> => {
-    const response = await apiClient.get('/analytics/personal');
+  const getPersonalAnalytics = async (): Promise<PersonalAnalytics> => {
+    const response = await apiClient.get<PersonalAnalytics>('/analytics/personal');
     return response.data;
   };
 
-  const getGlobalLeaderboard = async (): Promise<any> => {
-    const response = await apiClient.get('/analytics/leaderboard');
+  const getGlobalLeaderboard = async (): Promise<GlobalLeaderboard> => {
+    const response = await apiClient.get<GlobalLeaderboard>('/analytics/leaderboard');
     return response.data;
   };
 
@@ -39,12 +39,12 @@ export const useAPI = () => {
     await apiClient.delete(`/conversations/${conversationId}`);
   };
 
-  const login = async (credentials: any) => {
+  const login = async (credentials: AuthCredentials) => {
     const response = await apiClient.post('/auth/login', credentials);
     return response.data;
   };
 
-  const signup = async (data: any) => {
+  const signup = async (data: SignupData) => {
     const response = await apiClient.post('/auth/signup', data);
     return response.data;
   };

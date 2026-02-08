@@ -8,11 +8,11 @@
 		<version>3.4.2</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.personachatgrid</groupId>
+	<groupId>com.ainexus</groupId>
 	<artifactId>backend</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>backend</name>
-	<description>Backend for persona chat grid</description>
+	<description>High-Performance AI Aggregator and Analytics Hub</description>
 	<url/>
 	<licenses>
 		<license/>

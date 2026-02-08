@@ -33,8 +33,8 @@ export const AuthPage: React.FC = () => {
                     credits: response.credits
                 });
             }
-        } catch (err: any) {
-            setError(err.response?.data?.message || 'Authentication failed. Please try again.');
+        } catch (err: unknown) {
+            setError((err as Error).message || 'Authentication failed');
         }
     };
 

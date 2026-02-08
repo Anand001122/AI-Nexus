@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Header } from '../components/Header';
+import { Header } from '../components/layout/Header';
 import { useAPI } from '../hooks/useAPI';
 import {
     BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
@@ -9,24 +9,27 @@ import { Activity, Clock, Zap, MessageSquare, TrendingUp } from 'lucide-react';
 
 const COLORS = ['#3b82f6', '#8b5cf6', '#ec4899', '#f59e0b', '#10b981'];
 
+import { PersonalAnalytics, ModelStat } from '../types';
+
 export const AnalyticsPage: React.FC = () => {
-    const [data, setData] = useState<any>(null);
-    const { getPersonalAnalytics, isLoading, setIsLoading } = useAPI();
+    const [data, setData] = useState<PersonalAnalytics | null>(null);
+    const [isLoading, setIsLoading] = useState(true);
+    const { getPersonalAnalytics } = useAPI();
 
     useEffect(() => {
         const fetchData = async () => {
-            setIsLoading(true);
             try {
-                const result = await getPersonalAnalytics();
-                setData(result);
+                setIsLoading(true);
+                const res = await getPersonalAnalytics();
+                setData(res);
             } catch (err) {
-                console.error('Failed to fetch analytics:', err);
+                console.error('Failed to fetch analytics', err);
             } finally {
                 setIsLoading(false);
             }
         };
         fetchData();
-    }, []);
+    }, [getPersonalAnalytics]);
 
     if (isLoading || !data) {
         return (
@@ -60,21 +63,21 @@ export const AnalyticsPage: React.FC = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
                     <StatCard
                         title="Total Interaction"
-                        value={modelStats.reduce((acc: number, s: any) => acc + s.messageCount, 0)}
+                        value={modelStats.reduce((acc: number, s: ModelStat) => acc + s.messageCount, 0)}
                         icon={<MessageSquare className="w-6 h-6 text-blue-400" />}
                         suffix="Queries"
                         color="text-blue-400"
                     />
                     <StatCard
                         title="Real-time Speed"
-                        value={Math.round(modelStats.reduce((acc: number, s: any) => acc + s.avgResponseTime * s.messageCount, 0) / modelStats.reduce((acc: number, s: any) => acc + s.messageCount, 0) || 0)}
+                        value={Math.round(modelStats.reduce((acc: number, s: ModelStat) => acc + s.avgResponseTime * s.messageCount, 0) / modelStats.reduce((acc: number, s: ModelStat) => acc + s.messageCount, 0) || 0)}
                         icon={<Clock className="w-6 h-6 text-purple-400" />}
                         suffix="ms"
                         color="text-purple-400"
                     />
                     <StatCard
                         title="Agg. Efficiency"
-                        value={(modelStats.reduce((acc: number, s: any) => acc + s.avgTokensPerSecond * s.messageCount, 0) / modelStats.reduce((acc: number, s: any) => acc + s.messageCount, 0) || 0).toFixed(1)}
+                        value={(modelStats.reduce((acc: number, s: ModelStat) => acc + s.avgTokensPerSecond * s.messageCount, 0) / modelStats.reduce((acc: number, s: ModelStat) => acc + s.messageCount, 0) || 0).toFixed(1)}
                         icon={<Zap className="w-6 h-6 text-amber-400" />}
                         suffix="t/s"
                         color="text-amber-400"
@@ -99,20 +102,20 @@ export const AnalyticsPage: React.FC = () => {
                             <ResponsiveContainer width="100%" height="100%">
                                 <AreaChart data={activityTrend}>
                                     <defs>
-                                        <linearGradient id="colorMsg" x1="0" y1="0" x2="0" y2="1">
-                                            <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.4} />
+                                        <linearGradient id="colorCount" x1="0" y1="0" x2="0" y2="1">
+                                            <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3} />
                                             <stop offset="95%" stopColor="#3b82f6" stopOpacity={0} />
                                         </linearGradient>
                                     </defs>
-                                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#334155" />
-                                    <XAxis dataKey="date" axisLine={false} tickLine={false} tick={{ fill: '#64748b', fontSize: 12 }} dy={10} />
-                                    <YAxis axisLine={false} tickLine={false} tick={{ fill: '#64748b', fontSize: 12 }} />
+                                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#1f2937" />
+                                    <XAxis dataKey="date" axisLine={false} tickLine={false} tick={{ fill: '#94a3b8', fontSize: 12 }} dy={10} />
+                                    <YAxis axisLine={false} tickLine={false} tick={{ fill: '#94a3b8', fontSize: 12 }} />
                                     <Tooltip
                                         contentStyle={{ backgroundColor: '#020617', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '16px', color: '#fff' }}
                                         itemStyle={{ color: '#fff' }}
                                         labelStyle={{ color: '#94a3b8', fontWeight: 'bold' }}
                                     />
-                                    <Area type="monotone" dataKey="messageCount" name="Queries" stroke="#3b82f6" strokeWidth={4} fillOpacity={1} fill="url(#colorMsg)" />
+                                    <Area type="monotone" dataKey="messageCount" name="Queries" stroke="#3b82f6" strokeWidth={4} fillOpacity={1} fill="url(#colorCount)" />
                                 </AreaChart>
                             </ResponsiveContainer>
                         </div>
@@ -126,10 +129,10 @@ export const AnalyticsPage: React.FC = () => {
                         </h3>
                         <div className="h-[350px]">
                             <ResponsiveContainer width="100%" height="100%">
-                                <BarChart data={modelStats} layout="vertical" margin={{ left: 20 }}>
-                                    <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#334155" />
-                                    <XAxis type="number" axisLine={false} tickLine={false} tick={{ fill: '#64748b', fontSize: 12 }} />
-                                    <YAxis dataKey="aiModel" type="category" axisLine={false} tickLine={false} width={120} tick={{ fill: '#cbd5e1', fontSize: 12, fontWeight: 'bold' }} />
+                                <BarChart data={modelStats} layout="vertical" margin={{ left: 40 }}>
+                                    <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#1f2937" />
+                                    <XAxis type="number" axisLine={false} tickLine={false} tick={{ fill: '#64748b', fontSize: 12 }} hide />
+                                    <YAxis dataKey="modelId" type="category" axisLine={false} tickLine={false} tick={{ fill: '#fff', fontSize: 12, fontWeight: 'bold' }} />
                                     <Tooltip
                                         cursor={{ fill: 'rgba(255, 255, 255, 0.05)' }}
                                         contentStyle={{ backgroundColor: '#020617', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '16px', color: '#fff' }}
@@ -137,7 +140,7 @@ export const AnalyticsPage: React.FC = () => {
                                         labelStyle={{ color: '#94a3b8', fontWeight: 'bold' }}
                                     />
                                     <Bar dataKey="avgResponseTime" name="Latency (ms)" radius={[0, 10, 10, 0]} barSize={25}>
-                                        {modelStats.map((_: any, index: number) => (
+                                        {modelStats.map((_unused: ModelStat, index: number) => (
                                             <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                                         ))}
                                     </Bar>
@@ -163,10 +166,10 @@ export const AnalyticsPage: React.FC = () => {
                                         outerRadius={120}
                                         paddingAngle={8}
                                         dataKey="messageCount"
-                                        nameKey="aiModel"
+                                        nameKey="modelId"
                                         stroke="none"
                                     >
-                                        {modelStats.map((_: any, index: number) => (
+                                        {modelStats.map((_unused: ModelStat, index: number) => (
                                             <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                                         ))}
                                     </Pie>
