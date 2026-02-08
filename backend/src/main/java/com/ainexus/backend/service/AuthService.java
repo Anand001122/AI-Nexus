@@ -36,6 +36,7 @@ public class AuthService {
             user.setPassword(passwordEncoder.encode(request.getPassword()));
         }
 
+        user.setCredits(300);
         userRepository.save(user);
 
         String token = jwtUtils.generateToken(user.getEmail());
@@ -57,6 +58,15 @@ public class AuthService {
     public AuthResponse getMe(String email) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
+        return new AuthResponse(null, user.getEmail(), user.getFullName(), user.isPremium(), user.getCredits());
+    }
+
+    public AuthResponse upgradeUser(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        user.setPremium(true);
+        user.setCredits(user.getCredits() + 500); // Bonus credits on upgrade
+        userRepository.save(user);
         return new AuthResponse(null, user.getEmail(), user.getFullName(), user.isPremium(), user.getCredits());
     }
 }

@@ -28,6 +28,6 @@ public class User {
     @Column(columnDefinition = "boolean default false")
     private boolean isPremium = false;
 
-    @Column(columnDefinition = "int default 10")
-    private int credits = 10; // Default tokens/credits for new users
+    @Column(columnDefinition = "int default 300")
+    private int credits = 300; // Default tokens/credits for new users
 }

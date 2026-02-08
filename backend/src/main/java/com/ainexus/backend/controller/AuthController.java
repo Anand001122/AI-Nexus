@@ -27,4 +27,9 @@ public class AuthController {
     public ResponseEntity<AuthResponse> getMe(org.springframework.security.core.Authentication authentication) {
         return ResponseEntity.ok(authService.getMe(authentication.getName()));
     }
+
+    @PostMapping("/upgrade")
+    public ResponseEntity<AuthResponse> upgrade(org.springframework.security.core.Authentication authentication) {
+        return ResponseEntity.ok(authService.upgradeUser(authentication.getName()));
+    }
 }

@@ -3,27 +3,17 @@ import { Header } from '../components/layout/Header';
 import { Check, Zap, Sparkles, Shield, Rocket, Target } from 'lucide-react';
 import { useAuthStore } from '../store/authStore';
 import { useNavigate } from 'react-router-dom';
+import { CheckoutModal } from '../components/layout/CheckoutModal';
 
 export const ProPage: React.FC = () => {
-    const { user, setAuth, token } = useAuthStore();
+    const { user } = useAuthStore();
     const navigate = useNavigate();
-    const [isUpgrading, setIsUpgrading] = useState(false);
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
-    const handleUpgrade = async () => {
-        setIsUpgrading(true);
-        // Simulate payment/upgrade process
-        setTimeout(() => {
-            if (user && token) {
-                setAuth(token, {
-                    ...user,
-                    isPremium: true,
-                    credits: 100
-                });
-                alert('🎉 Welcome to the Expert Tier! Your prompt intelligence features are now unlocked.');
-                navigate('/');
-            }
-            setIsUpgrading(false);
-        }, 1500);
+    const handleSuccess = () => {
+        setIsModalOpen(false);
+        alert('🎉 Welcome to the Expert Tier! Your prompt intelligence features are now unlocked.');
+        navigate('/');
     };
 
     const features = [
@@ -107,15 +97,18 @@ export const ProPage: React.FC = () => {
                         </ul>
 
                         <button
-                            onClick={handleUpgrade}
-                            disabled={isUpgrading || user?.isPremium}
+                            onClick={() => setIsModalOpen(true)}
+                            disabled={user?.isPremium}
                             className={`w-full py-5 bg-blue-600 text-white rounded-2xl font-black uppercase tracking-[0.2em] text-xs shadow-xl shadow-blue-500/20 hover:bg-blue-700 active:scale-[0.98] transition-all flex items-center justify-center space-x-3 ${user?.isPremium ? 'opacity-50 cursor-default' : ''}`}
                         >
-                            {isUpgrading ? (
-                                <div className="h-5 w-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                            {user?.isPremium ? (
+                                <>
+                                    <span>Expert Access Active</span>
+                                    <Shield className="h-5 w-5" />
+                                </>
                             ) : (
                                 <>
-                                    <span>{user?.isPremium ? 'Expert Access Active' : 'Unlock Expert Tier'}</span>
+                                    <span>Unlock Expert Tier</span>
                                     <Rocket className="h-5 w-5" />
                                 </>
                             )}
@@ -130,6 +123,12 @@ export const ProPage: React.FC = () => {
                     <BenefitCard icon={<Shield className="h-8 w-8 text-emerald-500" />} title="Expert Clarity" description="Understand exactly why prompts work and how to fix them." />
                 </div>
             </div>
+
+            <CheckoutModal
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                onSuccess={handleSuccess}
+            />
         </div>
     );
 };

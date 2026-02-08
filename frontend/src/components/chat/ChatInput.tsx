@@ -144,8 +144,9 @@ export const ChatInput: React.FC = () => {
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
-      handleSubmit(e);
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleSubmit(e as any);
     }
   };
 
@@ -262,8 +263,11 @@ export const ChatInput: React.FC = () => {
 
           <div className="mt-3 flex items-center justify-center space-x-4 text-[10px] sm:text-xs text-gray-500 dark:text-gray-400">
             <div className="hidden sm:flex items-center space-x-2">
-              <kbd className="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded-lg text-xs font-mono">Ctrl+Enter</kbd>
+              <kbd className="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded-lg text-[10px] font-mono shadow-sm">Enter</kbd>
               <span>to send</span>
+              <span className="text-gray-300 dark:text-gray-600">|</span>
+              <kbd className="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded-lg text-[10px] font-mono shadow-sm">Shift+Enter</kbd>
+              <span>new line</span>
             </div>
             {selectedModels.length > 1 && (
               <div className="flex items-center space-x-2">
