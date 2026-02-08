@@ -1,11 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { Header } from '../components/layout/Header';
 import { useAPI } from '../hooks/useAPI';
+import { useChatStore } from '../store/chatStore';
 import {
     BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
     AreaChart, Area, PieChart, Pie, Cell
 } from 'recharts';
-import { Activity, Clock, Zap, MessageSquare, TrendingUp } from 'lucide-react';
+import { Activity, Clock, Zap, MessageSquare, TrendingUp, Filter, BarChart3 } from 'lucide-react';
 
 const COLORS = ['#3b82f6', '#8b5cf6', '#ec4899', '#f59e0b', '#10b981'];
 
@@ -14,7 +15,10 @@ import { PersonalAnalytics, ModelStat } from '../types';
 export const AnalyticsPage: React.FC = () => {
     const [data, setData] = useState<PersonalAnalytics | null>(null);
     const [isLoading, setIsLoading] = useState(true);
+    const [filterBySelection, setFilterBySelection] = useState(true);
+
     const { getPersonalAnalytics } = useAPI();
+    const { selectedModels } = useChatStore();
 
     useEffect(() => {
         const fetchData = async () => {
@@ -31,6 +35,14 @@ export const AnalyticsPage: React.FC = () => {
         fetchData();
     }, [getPersonalAnalytics]);
 
+    const displayStats = useMemo(() => {
+        if (!data) return [];
+        if (filterBySelection && selectedModels.length > 0) {
+            return data.modelStats.filter(s => selectedModels.includes(s.modelId));
+        }
+        return data.modelStats;
+    }, [data, filterBySelection, selectedModels]);
+
     if (isLoading || !data) {
         return (
             <div className="min-h-screen bg-slate-50 dark:bg-slate-900 flex flex-col">
@@ -42,20 +54,35 @@ export const AnalyticsPage: React.FC = () => {
         );
     }
 
-    const { modelStats, activityTrend } = data;
+    const { activityTrend } = data;
 
     return (
         <div className="min-h-screen bg-[#000000] text-slate-100 transition-all duration-500 pb-12">
             <Header />
             <main className="max-w-7xl mx-auto px-6 py-8">
-                <div className="flex items-center justify-between mb-12">
+                <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-12 gap-6">
                     <div>
                         <h1 className="text-4xl font-black text-white tracking-tight uppercase">Personal Intelligence</h1>
                         <p className="text-slate-400 font-medium">Deep insights into your AI interactions and performance trends</p>
                     </div>
-                    <div className="hidden sm:flex items-center space-x-3 bg-blue-500/10 text-blue-400 px-6 py-3 rounded-2xl border border-blue-500/20 shadow-lg shadow-blue-500/5">
-                        <Activity className="w-5 h-5 animate-pulse" />
-                        <span className="font-black uppercase tracking-widest text-sm">Live Pulse</span>
+
+                    <div className="flex items-center space-x-4">
+                        {selectedModels.length > 0 && (
+                            <button
+                                onClick={() => setFilterBySelection(!filterBySelection)}
+                                className={`flex items-center space-x-2 px-6 py-3 rounded-2xl border transition-all font-black uppercase tracking-widest text-xs ${filterBySelection
+                                        ? 'bg-blue-600 border-blue-500 text-white shadow-lg shadow-blue-500/20'
+                                        : 'bg-white/5 border-white/10 text-slate-400 hover:bg-white/10'
+                                    }`}
+                            >
+                                <Filter className="w-4 h-4" />
+                                <span>{filterBySelection ? 'Showing Selection' : 'Show All Models'}</span>
+                            </button>
+                        )}
+                        <div className="hidden sm:flex items-center space-x-3 bg-blue-500/10 text-blue-400 px-6 py-3 rounded-2xl border border-blue-500/20 shadow-lg shadow-blue-500/5">
+                            <Activity className="w-5 h-5 animate-pulse" />
+                            <span className="font-black uppercase tracking-widest text-sm">Live Pulse</span>
+                        </div>
                     </div>
                 </div>
 
@@ -63,28 +90,28 @@ export const AnalyticsPage: React.FC = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
                     <StatCard
                         title="Total Interaction"
-                        value={modelStats.reduce((acc: number, s: ModelStat) => acc + s.messageCount, 0)}
+                        value={displayStats.reduce((acc: number, s: ModelStat) => acc + s.messageCount, 0)}
                         icon={<MessageSquare className="w-6 h-6 text-blue-400" />}
                         suffix="Queries"
                         color="text-blue-400"
                     />
                     <StatCard
                         title="Real-time Speed"
-                        value={Math.round(modelStats.reduce((acc: number, s: ModelStat) => acc + s.avgResponseTime * s.messageCount, 0) / modelStats.reduce((acc: number, s: ModelStat) => acc + s.messageCount, 0) || 0)}
+                        value={Math.round(displayStats.reduce((acc: number, s: ModelStat) => acc + s.avgResponseTime * s.messageCount, 0) / displayStats.reduce((acc: number, s: ModelStat) => acc + s.messageCount, 0) || 0)}
                         icon={<Clock className="w-6 h-6 text-purple-400" />}
                         suffix="ms"
                         color="text-purple-400"
                     />
                     <StatCard
                         title="Agg. Efficiency"
-                        value={(modelStats.reduce((acc: number, s: ModelStat) => acc + s.avgTokensPerSecond * s.messageCount, 0) / modelStats.reduce((acc: number, s: ModelStat) => acc + s.messageCount, 0) || 0).toFixed(1)}
+                        value={(displayStats.reduce((acc: number, s: ModelStat) => acc + s.avgTokensPerSecond * s.messageCount, 0) / displayStats.reduce((acc: number, s: ModelStat) => acc + s.messageCount, 0) || 0).toFixed(1)}
                         icon={<Zap className="w-6 h-6 text-amber-400" />}
                         suffix="t/s"
                         color="text-amber-400"
                     />
                     <StatCard
                         title="Model Reach"
-                        value={modelStats.length}
+                        value={displayStats.length}
                         icon={<TrendingUp className="w-6 h-6 text-emerald-400" />}
                         suffix="Active"
                         color="text-emerald-400"
@@ -129,7 +156,7 @@ export const AnalyticsPage: React.FC = () => {
                         </h3>
                         <div className="h-[350px]">
                             <ResponsiveContainer width="100%" height="100%">
-                                <BarChart data={modelStats} layout="vertical" margin={{ left: 40 }}>
+                                <BarChart data={displayStats} layout="vertical" margin={{ left: 40 }}>
                                     <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#1f2937" />
                                     <XAxis type="number" axisLine={false} tickLine={false} tick={{ fill: '#64748b', fontSize: 12 }} hide />
                                     <YAxis dataKey="displayName" type="category" axisLine={false} tickLine={false} tick={{ fill: '#fff', fontSize: 12, fontWeight: 'bold' }} />
@@ -140,7 +167,7 @@ export const AnalyticsPage: React.FC = () => {
                                         labelStyle={{ color: '#94a3b8', fontWeight: 'bold' }}
                                     />
                                     <Bar dataKey="avgResponseTime" name="Latency (ms)" radius={[0, 10, 10, 0]} barSize={25}>
-                                        {modelStats.map((_unused: ModelStat, index: number) => (
+                                        {displayStats.map((_unused: ModelStat, index: number) => (
                                             <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                                         ))}
                                     </Bar>
@@ -159,7 +186,7 @@ export const AnalyticsPage: React.FC = () => {
                             <ResponsiveContainer width="100%" height="100%">
                                 <PieChart>
                                     <Pie
-                                        data={modelStats}
+                                        data={displayStats}
                                         cx="50%"
                                         cy="50%"
                                         innerRadius={80}
@@ -169,7 +196,7 @@ export const AnalyticsPage: React.FC = () => {
                                         nameKey="displayName"
                                         stroke="none"
                                     >
-                                        {modelStats.map((_unused: ModelStat, index: number) => (
+                                        {displayStats.map((_unused: ModelStat, index: number) => (
                                             <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                                         ))}
                                     </Pie>
@@ -191,7 +218,7 @@ export const AnalyticsPage: React.FC = () => {
                         </h3>
                         <div className="h-[350px]">
                             <ResponsiveContainer width="100%" height="100%">
-                                <BarChart data={modelStats} margin={{ bottom: 20 }}>
+                                <BarChart data={displayStats} margin={{ bottom: 20 }}>
                                     <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#334155" />
                                     <XAxis dataKey="displayName" axisLine={false} tickLine={false} tick={{ fill: '#cbd5e1', fontSize: 10, fontWeight: 'bold' }} dy={10} />
                                     <YAxis axisLine={false} tickLine={false} tick={{ fill: '#64748b', fontSize: 12 }} />
@@ -205,6 +232,18 @@ export const AnalyticsPage: React.FC = () => {
                         </div>
                     </div>
                 </div>
+
+                {displayStats.length === 0 && (
+                    <div className="mt-12 bg-[#111827] p-12 rounded-[3rem] border border-white/5 border-dashed flex flex-col items-center text-center">
+                        <div className="p-6 bg-slate-900 rounded-3xl mb-6">
+                            <BarChart3 className="w-12 h-12 text-slate-700" />
+                        </div>
+                        <h3 className="text-2xl font-black text-white uppercase italic mb-2">No Analysis Available</h3>
+                        <p className="text-slate-500 max-w-sm">
+                            We haven't captured any sessions for the currently selected models yet. Start a chat to see insights!
+                        </p>
+                    </div>
+                )}
             </main>
         </div>
     );
