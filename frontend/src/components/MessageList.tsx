@@ -1,9 +1,10 @@
 import React, { useEffect, useRef } from 'react';
 import { Message } from './Message';
-import { LoadingIndicator, TypingIndicator } from './LoadingIndicator';
+import { TypingIndicator } from './LoadingIndicator';
 import { useChatStore } from '../store/chatStore';
 import { AI_MODELS } from '../utils/constants';
 import * as LucideIcons from 'lucide-react';
+import { MetricsDashboard } from './MetricsDashboard';
 
 export const MessageList: React.FC = () => {
   const { conversations, currentConversationId, selectedModels, loading } = useChatStore();
@@ -42,9 +43,14 @@ export const MessageList: React.FC = () => {
 
   // Multi-model view with enhanced scrolling
   if (selectedModels.length > 1) {
+    const gridCols = selectedModels.length === 2 || selectedModels.length === 4
+      ? 'lg:grid-cols-2'
+      : 'lg:grid-cols-3';
+
     return (
-      <div className="flex-1 overflow-hidden bg-slate-50 dark:bg-slate-900">
-        <div className="h-full grid grid-cols-1 lg:grid-cols-3 gap-6 p-6">
+      <div className="flex-1 overflow-y-auto bg-slate-50 dark:bg-slate-900 scrollbar-thin">
+        <MetricsDashboard messages={messages} />
+        <div className={`grid grid-cols-1 ${gridCols} gap-8 p-8 h-fit`}>
           {selectedModels.map((modelId) => {
             const model = AI_MODELS.find(m => m.id === modelId);
             const modelMessages = messages.filter(m => m.aiModel === modelId || m.isUser);
@@ -54,7 +60,7 @@ export const MessageList: React.FC = () => {
             return (
               <div
                 key={modelId}
-                className="flex flex-col bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-2xl border border-white/20 dark:border-gray-700/50 shadow-2xl overflow-hidden"
+                className="flex flex-col bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-3xl border border-white/20 dark:border-gray-700/50 shadow-2xl overflow-hidden min-h-[600px] transition-all duration-300 hover:shadow-blue-500/10"
               >
                 {/* Enhanced Model Header */}
                 <div className={`p-6 bg-gradient-to-r ${model?.color} relative overflow-hidden`}>
@@ -73,7 +79,7 @@ export const MessageList: React.FC = () => {
                 </div>
 
                 {/* Enhanced Messages Container with Scroll */}
-                <div className="flex-1 overflow-y-auto p-4 space-y-4 min-h-0 max-h-[calc(100vh-300px)] scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-transparent">
+                <div className="flex-1 overflow-y-auto p-6 space-y-6 min-h-0 scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-transparent">
                   {modelMessages.length === 0 && !isLoading ? (
                     <div className="flex items-center justify-center h-32 text-gray-500 dark:text-gray-400">
                       <div className="text-center">
@@ -111,6 +117,7 @@ export const MessageList: React.FC = () => {
   return (
     <div className="flex-1 overflow-y-auto bg-slate-50 dark:bg-slate-900 scrollbar-thin">
       <div className="max-w-4xl mx-auto p-6 space-y-6">
+        <MetricsDashboard messages={messages} />
         {messages.map((message) => (
           <div key={message.id} className="group">
             <Message message={message} />

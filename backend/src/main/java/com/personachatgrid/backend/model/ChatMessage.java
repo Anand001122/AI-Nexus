@@ -1,43 +1,28 @@
 package com.personachatgrid.backend.model;
 
+import jakarta.persistence.*;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Entity
+@Table(name = "chat_messages")
+@Data
+@NoArgsConstructor
 public class ChatMessage {
+    @Id
     private String id;
+
+    @Column(columnDefinition = "TEXT")
     private String content;
+
     private boolean isUser;
     private String timestamp;
+    private String aiModel;
 
-    public ChatMessage() {
-    }
+    @Embedded
+    private ResponseMetrics metrics;
 
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getContent() {
-        return content;
-    }
-
-    public void setContent(String content) {
-        this.content = content;
-    }
-
-    public boolean isUser() {
-        return isUser;
-    }
-
-    public void setUser(boolean user) {
-        isUser = user;
-    }
-
-    public String getTimestamp() {
-        return timestamp;
-    }
-
-    public void setTimestamp(String timestamp) {
-        this.timestamp = timestamp;
-    }
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "conversation_id")
+    private Conversation conversation;
 }

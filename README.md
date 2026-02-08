@@ -1,106 +1,105 @@
-# 🤖 AI Nexus: Multi-Model Intelligence Hub
+# 🤖 AI Nexus: The Industrial-Grade Intelligence Hub
 
-AI Nexus is a professional-grade, full-stack AI orchestration platform. It allows users to query multiple state-of-the-art AI models (Grok, Gemini, GPT-5, and Deepseek) simultaneously, comparing results in a sleek, side-by-side glassmorphism interface.
+AI Nexus is a high-performance, full-stack AI orchestration platform. It enables real-time comparison across state-of-the-art models (Grok, Gemini, GPT-5, Deepseek) while capturing deep performance metrics to identify the most efficient intelligence for any task.
 
-## 🚀 Live Demo
-*   **Web Portal**: [https://chat-grid.vercel.app/](https://chat-grid.vercel.app/) (Legacy)
-*   **Production Deployment**: [https://ai-nexus-frontend.netlify.app/](https://ai-nexus-frontend.netlify.app/)
+![AI Nexus Preview](https://your-preview-image-link.com) <!-- Replace with actual image if available -->
+
+## 💎 World-Class Features
+
+### ⚖️ Multi-Model Benchmarking
+Query multiple models simultaneously and compare their **latency (ms)** and **throughput (tokens/sec)** live. Identify which AI is fastest and most efficient for your specific queries.
+
+### 📊 Intelligence Analytics
+- **Personal Pulse**: Deep insights into your interaction trends, model reach, and aggregate efficiency.
+- **Global Leaderboard**: See real-time "Market Share" and performance rankings across the entire AI Nexus network.
+
+### 🧠 Prompt Intelligence
+- **Real-time Quality Meter**: Get instant feedback on your prompt strength before you send it.
+- **Master Rewrite (✨)**: Use AI to professionally optimize and restructure your prompts for better results.
+- **Expert Advice Mode**: Orchestrate models to provide deeper technical insights and critical analysis.
+
+### 🌑 Luxury Aesthetics
+- **Premium Pure Black Theme**: A high-contrast, sophisticated workspace designed for professional use.
+- **Glassmorphic UI**: Modern, responsive interface with smooth transitions and rounded aesthetics.
 
 ---
 
-## 🏗️ Architecture & Workflow
+## 🏗️ Industrial-Grade Architecture
 
-AI Nexus follows a modern distributed architecture, separating concerns between a responsive frontend, a robust Java-based orchestration layer, and global AI model providers.
+AI Nexus is built on a scalable, high-trust stack designed for persistence and performance.
+
+### Tech Stack
+- **Frontend**: React 18, TypeScript, Tailwind CSS, Zustand, Recharts.
+- **Backend**: Java 21, Spring Boot 3, Spring Security (JWT + OAuth2), Spring Data JPA.
+- **Database**: PostgreSQL 15 (Containerized).
+- **Orchestration**: Docker & Docker Compose.
+- **AI Gateway**: OpenRouter API.
 
 ### Workflow Diagram
 ```mermaid
 graph TD
-    User((User)) -->|Interacts| Frontend[React + Vite Frontend]
-    Frontend -->|HTTPS/REST| Backend[Spring Boot Backend]
-    Backend -->|Auth + Query| OpenRouter[OpenRouter API Gateway]
-    OpenRouter -->|Route| Models{AI Models}
-    
-    Models -.->|Grok 2| OpenRouter
-    Models -.->|GPT-4o / GPT-5| OpenRouter
-    Models -.->|Deepseek R1| OpenRouter
-    Models -.->|Gemini 2.0 Pro| OpenRouter
-    
-    OpenRouter -->|Aggregated Response| Backend
-    Backend -->|Simplified JSON| Frontend
-    Frontend -->|Dynamic UI Rendering| User
+    User((User)) -->|HTTPS| Frontend[React Desktop UI]
+    Frontend -->|JWT Auth| Backend[Spring Boot API]
+    Backend -->|Persistence| DB[(PostgreSQL 15)]
+    Backend -->|Optimization| PromptService[AI Prompt Intelligence]
+    Backend -->|Orchestration| AI_Gateway[OpenRouter Gateway]
+    AI_Gateway -->|Route| Models{Grok, Gemini, GPT-5, Deepseek}
+    Models -->|Benchmarks| AI_Gateway
+    AI_Gateway -->|Aggregated Response| Backend
+    Backend -->|Verified Results| Frontend
 ```
 
 ---
 
-## 💻 Tech Stack
+## 🚀 Getting Started (Docker)
 
-### Frontend (User Interface)
-- **Framework**: React 18 with TypeScript
-- **Styling**: Tailwind CSS (Custom Glassmorphism Design)
-- **State Management**: Zustand (Global Chat Store)
-- **Icons**: Lucide React
-- **Build Tool**: Vite
+AI Nexus is fully containerized for a "Plug & Play" experience.
 
-### Backend (Orchestration)
-- **Language**: Java 21 (Eclipse Temurin)
-- **Framework**: Spring Boot 3.4.2
-- **Networking**: Java 11 HttpClient
-- **Build Tool**: Maven
+### Prerequisites
+- [Docker Desktop](https://www.docker.com/products/docker-desktop/) installed and running.
 
-### Infrastructure & DevOps
-- **Hosting**: Netlify (Frontend) & Render (Backend)
-- **CI/CD**: GitHub Actions & Jenkins
-- **Quality**: SonarCloud Quality Gate Integration
-- **Containerization**: Docker (Dockerized Spring Boot environment)
+### Installation
+1. **Clone the repository**:
+   ```bash
+   git clone https://github.com/Anand001122/AI-Nexus.git
+   cd AI-Nexus
+   ```
 
----
+2. **Configure Environment**:
+   Update the `.env` file with your API keys and configuration:
+   ```env
+   # Backend
+   DEEPSEEK_APIKEY=your_key
+   OPENAI_APIKEY=your_key
+   GROK_APIKEY=your_key
+   GEMINI_APIKEY=your_key
+   GOOGLE_CLIENT_ID=your_id
+   GOOGLE_CLIENT_SECRET=your_secret
+   
+   # Frontend
+   VITE_API_BASE_URL=http://localhost:8080/api
+   ```
 
-## 🔋 Supported AI Models
+3. **Launch the Hub**:
+   ```bash
+   docker-compose up --build -d
+   ```
 
-| Model Identity | Internal ID | Capabilities |
-| :--- | :--- | :--- |
-| **Grok 2.1** | `x-ai/grok-2-1212` | Real-time knowledge and coding assistance. |
-| **GPT-5 Chat** | `openai/gpt-4o` | High-level reasoning and instruction following. |
-| **Deepseek R1** | `deepseek/deepseek-r1:free` | Advanced open-source logic and math. |
-| **Gemini 2.5 Pro** | `google/gemini-2.0-pro-exp` | Large context windows and multimodal tasks. |
-
----
-
-## 🛠️ Requirements & Installation
-
-### Local Prerequisites
-- **Node.js**: v18.0.0 or higher
-- **JDK**: Java 17 or higher (Java 21 recommended)
-- **Maven**: 3.8.1+ (or use `./mvnw`)
-
-### Configuration
-1.  **Backend Env Vars**: Create environment variables for:
-    - `Deepseek_APIKEY`
-    - `OpenAI_APIKey`
-    - `Grok_APIKEY`
-    - `GEMINI_APIKEY`
-2.  **Frontend Env Vars**: Create a `.env` file in `/frontend`:
-    ```env
-    VITE_API_BASE_URL=http://localhost:8080/api
-    ```
-
-### Running Locally
-1.  **Start Backend**:
-    ```bash
-    cd backend
-    ./mvnw spring-boot:run
-    ```
-2.  **Start Frontend**:
-    ```bash
-    cd frontend
-    npm install
-    npm run dev
-    ```
+4. **Access the App**:
+   - **Frontend**: [http://localhost:5173](http://localhost:5173)
+   - **API Docs**: [http://localhost:8080/v3/api-docs](http://localhost:8080/v3/api-docs)
 
 ---
 
-## 🛡️ Security & CORS
-The application implements a strict Global CORS policy, allowing only verified origins from **Netlify** and **Vercel** to communicate with the production API. API keys are never exposed to the client-side and remain secured within the server-side environment.
+## 🛠️ Database Management
+The system uses a persistent PostgreSQL volume. You can inspect the data directly via Docker:
+```bash
+# List all registered users
+docker exec -it ai-nexus-db psql -U postgres -d ai_nexus -c "SELECT email, full_name, is_premium FROM users;"
+
+# View latest model performance
+docker exec -it ai-nexus-db psql -U postgres -d ai_nexus -c "SELECT ai_model, response_time_ms, tokens_per_second FROM chat_messages WHERE is_user = false ORDER BY timestamp DESC LIMIT 5;"
+```
 
 ---
-*Created with ❤️ by Anand Hiremath*
+*Created with ❤️ by [Anand Hiremath](https://github.com/Anand001122)*

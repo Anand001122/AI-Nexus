@@ -1,26 +1,27 @@
 package com.personachatgrid.backend.model;
 
+import jakarta.persistence.*;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import java.util.ArrayList;
 import java.util.List;
 
+@Entity
+@Table(name = "conversations")
+@Data
+@NoArgsConstructor
 public class Conversation {
+    @Id
     private String id;
+    
     private String aiModel;
-    private List<ChatMessage> messages;
     private String createdAt;
     private String updatedAt;
 
-    public String getId() { return id; }
-    public void setId(String id) { this.id = id; }
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
 
-    public String getAiModel() { return aiModel; }
-    public void setAiModel(String aiModel) { this.aiModel = aiModel; }
-
-    public List<ChatMessage> getMessages() { return messages; }
-    public void setMessages(List<ChatMessage> messages) { this.messages = messages; }
-
-    public String getCreatedAt() { return createdAt; }
-    public void setCreatedAt(String createdAt) { this.createdAt = createdAt; }
-
-    public String getUpdatedAt() { return updatedAt; }
-    public void setUpdatedAt(String updatedAt) { this.updatedAt = updatedAt; }
+    @OneToMany(mappedBy = "conversation", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ChatMessage> messages = new ArrayList<>();
 }

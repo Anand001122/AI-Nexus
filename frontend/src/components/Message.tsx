@@ -53,6 +53,16 @@ export const Message: React.FC<MessageProps> = ({ message }) => {
             <span className="text-xs text-gray-500 dark:text-gray-400 ml-3 bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded-full">
               {formatTimestamp(message.timestamp)}
             </span>
+            {message.metrics && (
+              <>
+                <span className="text-xs text-blue-500 dark:text-blue-400 ml-2 bg-blue-50 dark:bg-blue-900/30 px-2 py-1 rounded-full border border-blue-200/50 dark:border-blue-800/50">
+                  {message.metrics.responseTimeMs / 1000}s
+                </span>
+                <span className="text-xs text-emerald-500 dark:text-emerald-400 ml-2 bg-emerald-50 dark:bg-emerald-900/30 px-2 py-1 rounded-full border border-emerald-200/50 dark:border-emerald-800/50">
+                  {message.metrics.wordCount} words
+                </span>
+              </>
+            )}
           </div>
 
           {/* Enhanced Message Bubble */}

@@ -7,7 +7,8 @@ export const AI_MODELS: AIModel[] = [
     displayName: 'Gemini 2.5 Pro',
     color: 'from-indigo-600 via-purple-600 to-violet-700',
     icon: 'Sparkles',
-    description: 'Google\'s next-gen intelligence'
+    description: 'Google\'s next-gen intelligence',
+    isExpert: true
   },
   {
     id: 'gpt5',
@@ -31,7 +32,8 @@ export const AI_MODELS: AIModel[] = [
     displayName: 'DeepSeek',
     color: 'from-cyan-500 via-blue-600 to-indigo-700',
     icon: 'Eye',
-    description: 'Advanced logical reasoning'
+    description: 'Advanced logical reasoning',
+    isExpert: true
   }
 ];
 

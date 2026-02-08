@@ -5,6 +5,13 @@ export interface AIModel {
   color: string;
   icon: string;
   description: string;
+  isExpert?: boolean;
+}
+
+export interface ResponseMetrics {
+  responseTimeMs: number;
+  wordCount: number;
+  tokensPerSecond: number;
 }
 
 export interface Message {
@@ -14,6 +21,7 @@ export interface Message {
   conversationId: string;
   timestamp: string;
   isUser?: boolean;
+  metrics?: ResponseMetrics;
 }
 
 export interface Conversation {
@@ -37,6 +45,7 @@ export interface SendMessageRequest {
   conversationId: string;
   aiModel: string;
   message: string;
+  isExpertAdvice?: boolean;
 }
 
 export interface SendMessageResponse {
@@ -45,6 +54,7 @@ export interface SendMessageResponse {
   aiModel: string;
   conversationId: string;
   timestamp: string;
+  metrics?: ResponseMetrics;
 }
 
 export interface CreateConversationRequest {

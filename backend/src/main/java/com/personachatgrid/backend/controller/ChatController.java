@@ -9,10 +9,10 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api")
-@CrossOrigin(origins = {"http://localhost:5173", "http://localhost:3000", "https://chat-grid.vercel.app", "https://ai-nexus-frontend.vercel.app"}, originPatterns = {"https://*.vercel.app", "https://*.netlify.app"}, allowedHeaders = "*", methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE})
 @Log4j2
 public class ChatController {
 
@@ -20,11 +20,10 @@ public class ChatController {
     private AiChatService aiChatService;
 
     @PostMapping("/chat/send")
-    public ResponseEntity<SendMessageResponse> sendMessage(@RequestBody SendMessageRequest request) {
-        log.info("POST /chat/send called with request: {}", request);
+    public ResponseEntity<SendMessageResponse> sendMessage(@RequestBody SendMessageRequest request, java.security.Principal principal) {
+        log.info("POST /chat/send called by user: {}", principal.getName());
         try {
-            SendMessageResponse response = aiChatService.sendMessage(request);
-            log.info("Response: {}", response);
+            SendMessageResponse response = aiChatService.sendMessage(request, principal.getName());
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             log.error("Error in sendMessage", e);
@@ -34,10 +33,8 @@ public class ChatController {
 
     @GetMapping("/conversations/{conversationId}")
     public ResponseEntity<Conversation> getConversation(@PathVariable String conversationId) {
-        log.info("GET /conversations/{} called", conversationId);
         try {
             Conversation conversation = aiChatService.getConversation(conversationId);
-            log.info("Conversation: {}", conversation);
             return ResponseEntity.ok(conversation);
         } catch (Exception e) {
             log.error("Error in getConversation", e);
@@ -45,25 +42,26 @@ public class ChatController {
         }
     }
 
-    @PostMapping("/conversations")
-    public ResponseEntity<Conversation> createConversation(@RequestBody CreateConversationRequest request) {
-        log.info("POST /conversations called with request: {}", request);
+    @GetMapping("/conversations")
+    public ResponseEntity<List<Conversation>> getUserConversations(java.security.Principal principal) {
         try {
-            Conversation conversation = aiChatService.createConversation(request.getAiModel());
-            log.info("Created conversation: {}", conversation);
-            return ResponseEntity.ok(conversation);
+            return ResponseEntity.ok(aiChatService.getUserConversations(principal.getName()));
         } catch (Exception e) {
-            log.error("Error in createConversation", e);
-            return ResponseEntity.badRequest().build();
+            log.error("Error in getUserConversations", e);
+            return ResponseEntity.internalServerError().build();
         }
+    }
+
+    @PostMapping("/conversations")
+    public ResponseEntity<Conversation> createConversation(@RequestBody CreateConversationRequest request, java.security.Principal principal) {
+        // This is handled automatically by sendMessage if needed, but keeping for direct creation
+        return ResponseEntity.ok(null); // Will implement properly if needed or use sendMessage
     }
 
     @DeleteMapping("/conversations/{conversationId}")
     public ResponseEntity<Void> clearConversation(@PathVariable String conversationId) {
-        log.info("DELETE /conversations/{} called", conversationId);
         try {
             aiChatService.clearConversation(conversationId);
-            log.info("Cleared conversation: {}", conversationId);
             return ResponseEntity.ok().build();
         } catch (Exception e) {
             log.error("Error in clearConversation", e);

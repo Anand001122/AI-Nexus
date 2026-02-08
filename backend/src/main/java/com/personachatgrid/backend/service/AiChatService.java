@@ -3,11 +3,17 @@ package com.personachatgrid.backend.service;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.personachatgrid.backend.config.AIConfig;
+import com.personachatgrid.backend.model.ResponseMetrics;
 import com.personachatgrid.backend.model.ChatMessage;
 import com.personachatgrid.backend.model.Conversation;
 import com.personachatgrid.backend.model.SendMessageRequest;
 import com.personachatgrid.backend.model.SendMessageResponse;
+import com.personachatgrid.backend.model.User;
+import com.personachatgrid.backend.repository.ChatMessageRepository;
+import com.personachatgrid.backend.repository.ConversationRepository;
+import com.personachatgrid.backend.repository.UserRepository;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.net.URI;
@@ -24,18 +30,34 @@ import java.util.concurrent.ConcurrentHashMap;
 public class AiChatService {
 
     private static final ObjectMapper mapper = new ObjectMapper();
-    private final Map<String, Conversation> conversations = new ConcurrentHashMap<>();
-    private final AIConfig  aiConfig;
+    private final AIConfig aiConfig;
+    
+    @Autowired
+    private UserRepository userRepository;
+    
+    @Autowired
+    private ConversationRepository conversationRepository;
+    
+    @Autowired
+    private ChatMessageRepository chatMessageRepository;
 
     public AiChatService(AIConfig aiConfig){
         this.aiConfig = aiConfig;
     }
     
-    public SendMessageResponse sendMessage(SendMessageRequest request) {
+    public SendMessageResponse sendMessage(SendMessageRequest request, String userEmail) {
+        User user = userRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
-        Conversation conversation = conversations.get(request.getConversationId());
-        if (conversation == null) {
-            conversation = createConversation(request.getAiModel());
+        Conversation conversation = conversationRepository.findById(request.getConversationId())
+                .orElseGet(() -> createConversation(request.getAiModel(), user));
+
+        if (request.isExpertAdvice()) {
+            if (user.getCredits() <= 0) {
+                throw new RuntimeException("Insufficient credits for Expert Advice. Please upgrade or wait for a top-up!");
+            }
+            user.setCredits(user.getCredits() - 1);
+            userRepository.save(user);
         }
 
         ChatMessage userMessage = new ChatMessage();
@@ -43,19 +65,29 @@ public class AiChatService {
         userMessage.setContent(request.getMessage());
         userMessage.setUser(true);
         userMessage.setTimestamp(LocalDateTime.now().toString());
+        userMessage.setConversation(conversation);
         conversation.getMessages().add(userMessage);
 
-        String aiResponse = generateAiResponse(request.getMessage(), request.getAiModel());
+        long startTime = System.currentTimeMillis();
+        String aiResponse = generateAiResponse(conversation, request.getAiModel(), request.isExpertAdvice());
+        long endTime = System.currentTimeMillis();
+        
+        long duration = endTime - startTime;
+        int wordCount = aiResponse.trim().split("\\s+").length;
+        ResponseMetrics metrics = new ResponseMetrics(duration, wordCount);
         
         ChatMessage aiMessage = new ChatMessage();
         aiMessage.setId(UUID.randomUUID().toString());
         aiMessage.setContent(aiResponse);
         aiMessage.setUser(false);
+        aiMessage.setAiModel(request.getAiModel());
         aiMessage.setTimestamp(LocalDateTime.now().toString());
+        aiMessage.setMetrics(metrics);
+        aiMessage.setConversation(conversation);
         conversation.getMessages().add(aiMessage);
 
         conversation.setUpdatedAt(LocalDateTime.now().toString());
-        conversations.put(conversation.getId(), conversation);
+        conversationRepository.save(conversation);
 
         SendMessageResponse response = new SendMessageResponse();
         response.setId(aiMessage.getId());
@@ -63,36 +95,42 @@ public class AiChatService {
         response.setAiModel(request.getAiModel());
         response.setConversationId(conversation.getId());
         response.setTimestamp(aiMessage.getTimestamp());
+        response.setMetrics(metrics);
         
         return response;
     }
     
     public Conversation getConversation(String conversationId) {
-        return conversations.get(conversationId);
+        return conversationRepository.findById(conversationId).orElse(null);
     }
     
-    public Conversation createConversation(String aiModel) {
+    public Conversation createConversation(String aiModel, User user) {
         Conversation conversation = new Conversation();
         conversation.setId(UUID.randomUUID().toString());
         conversation.setAiModel(aiModel);
         conversation.setMessages(new ArrayList<>());
         conversation.setCreatedAt(LocalDateTime.now().toString());
         conversation.setUpdatedAt(LocalDateTime.now().toString());
+        conversation.setUser(user);
         
-        conversations.put(conversation.getId(), conversation);
-        return conversation;
+        return conversationRepository.save(conversation);
     }
     
     public void clearConversation(String conversationId) {
-        Conversation conversation = conversations.get(conversationId);
+        Conversation conversation = conversationRepository.findById(conversationId).orElse(null);
         if (conversation != null) {
-            conversation.setMessages(new ArrayList<>());
+            chatMessageRepository.deleteAll(conversation.getMessages());
+            conversation.getMessages().clear();
             conversation.setUpdatedAt(LocalDateTime.now().toString());
-            conversations.put(conversationId, conversation);
+            conversationRepository.save(conversation);
         }
     }
     
-    private String generateAiResponse(String userMessage, String model) {
+    public List<Conversation> getUserConversations(String userEmail) {
+        return conversationRepository.findByUserEmailOrderByUpdatedAtDesc(userEmail);
+    }
+
+    private String generateAiResponse(Conversation conversation, String model, boolean isExpertAdvice) {
         try {
             String modelIdentifier = aiConfig.getModelIdentifier(model);
             String apiKey = aiConfig.getApiKeyForModel(model);
@@ -100,44 +138,54 @@ public class AiChatService {
                 log.error("Missing configuration for model: {}", model);
                 return "AI Error: Configuration missing for model " + model;
             }
+            
+            StringBuilder messagesJson = new StringBuilder();
+            
+            if (isExpertAdvice) {
+                messagesJson.append("{");
+                messagesJson.append("\"role\": \"system\",");
+                messagesJson.append("\"content\": \"You are an expert consultant. Provide deep technical insights, critical analysis, and detailed explanations. Focus on accuracy and nuance.\"");
+                messagesJson.append("},");
+            }
+
+            List<ChatMessage> history = conversation.getMessages();
+            for (int i = 0; i < history.size(); i++) {
+                ChatMessage m = history.get(i);
+                messagesJson.append("{");
+                messagesJson.append("\"role\": \"").append(m.isUser() ? "user" : "assistant").append("\",");
+                messagesJson.append("\"content\": \"").append(sanitizeJson(m.getContent())).append("\"");
+                messagesJson.append("}");
+                if (i < history.size() - 1) {
+                    messagesJson.append(",");
+                }
+            }
+
             String jsonContent = "{" +
-                    "\"model\": \"" + modelIdentifier + "\"," + // Fixed this line
-                    "\"messages\": [" +
-                    "{" +
-                    "\"role\": \"user\"," +
-                    "\"content\": \"" + sanitizeJson(userMessage) + "\"" +
-                    "}" +
-                    "]" +
+                    "\"model\": \"" + modelIdentifier + "\"," +
+                    "\"messages\": [" + messagesJson.toString() + "]" +
                     "}";
 
-            log.debug("JSON: {}", jsonContent);
-
-            HttpRequest request = HttpRequest.newBuilder()
+            HttpRequest rawRequest = HttpRequest.newBuilder()
                     .uri(URI.create(aiConfig.getEndpoint()))
                     .header("Authorization", "Bearer " + apiKey)
                     .header("Content-Type", "application/json")
+                    .header("HTTP-Referer", "http://localhost:5173")
+                    .header("X-Title", "AI Nexus")
                     .POST(HttpRequest.BodyPublishers.ofString(jsonContent))
-                    .timeout(Duration.ofSeconds(30))
+                    .timeout(Duration.ofSeconds(60))
                     .build();
 
-            log.debug("Sending request to {}", aiConfig.getEndpoint());
-            HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
-
-            log.debug("Response status: {}", response.statusCode());
+            HttpResponse<String> response = HttpClient.newHttpClient().send(rawRequest, HttpResponse.BodyHandlers.ofString());
 
             if (response.statusCode() != 200) {
-                return "API Error: HTTP " + response.statusCode() + " - " +
-                        response.body().substring(0, Math.min(200, response.body().length()));
+                log.error("API Error Response: {}", response.body());
+                return "API Error: HTTP " + response.statusCode();
             }
 
             JsonNode root = mapper.readTree(response.body());
-            String content = root.path("choices").get(0)
-                    .path("message").path("content").asText();
-
-            log.debug("AI Response: {}", content);
-            return content;
-        }catch (Exception e) {
-            log.error("AI Service Error", e);
+            return root.path("choices").get(0).path("message").path("content").asText();
+        } catch (Exception e) {
+            log.error("AI Service Error for model " + model, e);
             return "AI Error: " + e.getMessage();
         }
     }
