@@ -64,6 +64,7 @@ export interface CreateConversationRequest {
 
 export interface ModelStat {
   modelId: string;
+  displayName: string;
   messageCount: number;
   avgResponseTime: number;
   avgTokensPerSecond: number;

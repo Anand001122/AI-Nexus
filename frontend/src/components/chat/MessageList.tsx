@@ -48,8 +48,10 @@ export const MessageList: React.FC = () => {
       : 'lg:grid-cols-3';
 
     return (
-      <div className="flex-1 overflow-y-auto bg-black scrollbar-thin">
-        <MetricsDashboard messages={messages} />
+      <div className="flex-1 overflow-y-auto bg-black scrollbar-thin flex flex-col">
+        <div className="sticky top-0 z-30 px-8 py-4 bg-black/80 backdrop-blur-md border-b border-white/5">
+          <MetricsDashboard messages={messages} />
+        </div>
         <div className={`grid grid-cols-1 ${gridCols} gap-8 p-8 h-fit`}>
           {selectedModels.map((modelId) => {
             const model = AI_MODELS.find(m => m.id === modelId);

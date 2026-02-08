@@ -15,6 +15,17 @@ public class AnalyticsService {
     @Autowired
     private ChatMessageRepository chatMessageRepository;
 
+    private static final Map<String, String> MODEL_NAME_MAP = Map.of(
+        "gemini", "Gemini 2.5 Pro",
+        "gpt5", "GPT-5 Chat",
+        "grok", "Grok 4.1",
+        "deepseek", "DeepSeek"
+    );
+
+    private String getDisplayName(String modelId) {
+        return MODEL_NAME_MAP.getOrDefault(modelId, modelId);
+    }
+
     public PersonalAnalytics getPersonalAnalytics(String userEmail) {
         List<ChatMessage> messages = chatMessageRepository.findByConversationUserEmail(userEmail)
                 .stream().filter(m -> !m.isUser() && m.getMetrics() != null).collect(Collectors.toList());
@@ -72,12 +83,12 @@ public class AnalyticsService {
                 .collect(Collectors.groupingBy(ChatMessage::getAiModel));
 
         return grouped.entrySet().stream().map(entry -> {
-            String model = entry.getKey();
+            String modelId = entry.getKey();
             List<ChatMessage> msgs = entry.getValue();
             double avgTime = msgs.stream().mapToLong(m -> m.getMetrics().getResponseTimeMs()).average().orElse(0);
             double avgWords = msgs.stream().mapToInt(m -> m.getMetrics().getWordCount()).average().orElse(0);
             double avgTps = msgs.stream().mapToDouble(m -> m.getMetrics().getTokensPerSecond()).average().orElse(0);
-            return new ModelPerformanceStats(model, avgTime, avgWords, avgTps, msgs.size());
+            return new ModelPerformanceStats(modelId, getDisplayName(modelId), avgTime, avgWords, avgTps, msgs.size());
         }).collect(Collectors.toList());
     }
 

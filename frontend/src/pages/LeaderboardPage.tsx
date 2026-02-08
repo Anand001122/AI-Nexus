@@ -126,7 +126,7 @@ const LeaderboardSection: React.FC<{
                             <div className="flex items-center space-x-5">
                                 <RankBadge rank={index + 1} modelColor={modelData?.color} />
                                 <div>
-                                    <h4 className="font-bold text-white text-lg leading-tight">{item.displayName}</h4>
+                                    <h4 className="font-bold text-white text-lg leading-tight">{item.displayName || item.modelId}</h4>
                                     <p className="text-[10px] text-slate-500 uppercase font-black tracking-widest">{item.modelId}</p>
                                 </div>
                             </div>

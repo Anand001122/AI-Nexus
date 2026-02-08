@@ -12,7 +12,8 @@ public class AnalyticsModels {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class ModelPerformanceStats {
-        private String aiModel;
+        private String modelId;
+        private String displayName;
         private double avgResponseTime;
         private double avgWordCount;
         private double avgTokensPerSecond;

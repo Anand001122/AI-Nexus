@@ -132,7 +132,7 @@ export const AnalyticsPage: React.FC = () => {
                                 <BarChart data={modelStats} layout="vertical" margin={{ left: 40 }}>
                                     <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#1f2937" />
                                     <XAxis type="number" axisLine={false} tickLine={false} tick={{ fill: '#64748b', fontSize: 12 }} hide />
-                                    <YAxis dataKey="modelId" type="category" axisLine={false} tickLine={false} tick={{ fill: '#fff', fontSize: 12, fontWeight: 'bold' }} />
+                                    <YAxis dataKey="displayName" type="category" axisLine={false} tickLine={false} tick={{ fill: '#fff', fontSize: 12, fontWeight: 'bold' }} />
                                     <Tooltip
                                         cursor={{ fill: 'rgba(255, 255, 255, 0.05)' }}
                                         contentStyle={{ backgroundColor: '#020617', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '16px', color: '#fff' }}
@@ -166,7 +166,7 @@ export const AnalyticsPage: React.FC = () => {
                                         outerRadius={120}
                                         paddingAngle={8}
                                         dataKey="messageCount"
-                                        nameKey="modelId"
+                                        nameKey="displayName"
                                         stroke="none"
                                     >
                                         {modelStats.map((_unused: ModelStat, index: number) => (
@@ -193,7 +193,7 @@ export const AnalyticsPage: React.FC = () => {
                             <ResponsiveContainer width="100%" height="100%">
                                 <BarChart data={modelStats} margin={{ bottom: 20 }}>
                                     <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#334155" />
-                                    <XAxis dataKey="aiModel" axisLine={false} tickLine={false} tick={{ fill: '#cbd5e1', fontSize: 10, fontWeight: 'bold' }} dy={10} />
+                                    <XAxis dataKey="displayName" axisLine={false} tickLine={false} tick={{ fill: '#cbd5e1', fontSize: 10, fontWeight: 'bold' }} dy={10} />
                                     <YAxis axisLine={false} tickLine={false} tick={{ fill: '#64748b', fontSize: 12 }} />
                                     <Tooltip
                                         cursor={{ fill: 'rgba(255, 255, 255, 0.05)' }}
